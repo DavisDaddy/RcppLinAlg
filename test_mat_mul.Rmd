@@ -1,0 +1,128 @@
+This document contains two small examples of calling out from R to C++ to do
+matrix multiplication.  The first example uses the `RcppArmadillo` package,
+and the second uses the `RcppEigen` package.
+
+The point here is mainly to get familiar with the mechanics of calling the C++
+linear-algegra stuff from R, although the timing results are mildly
+interesting as well.
+
+Each example contains a timing comparison, comparing the built-in
+matrix-multiplication function in R to the Rcpp* version.
+
+In each case the C++ code is contained in a separate file and is executed
+using the `sourceCpp` function in R.
+
+Here is the first C++ function, **mat_mul_arma.cpp**:
+
+```
+
+#include <RcppArmadillo.h>
+
+// [[Rcpp::depends(RcppArmadillo)]]
+
+// [[Rcpp::export]]
+
+arma::mat  mat_mul_arma(arma::mat A,
+			arma::mat B) {
+  arma::mat C = (A * B);
+  return C;
+}
+
+
+/*** R
+
+library(microbenchmark)
+amat <- matrix(as.numeric(1:9),   nrow=3)
+bmat <- matrix(as.numeric(10:18), nrow=3)
+
+mat_mul_arma(amat, bmat)
+
+amat %*% bmat
+
+microbenchmark(
+  amat %*% bmat,
+  mat_mul_arma(amat, bmat)
+)
+
+bigMat1 <- matrix(runif(1000000), nrow=1000)
+bigMat2 <- matrix(runif(1000000), nrow=1000)
+
+all.equal(bigMat1 %*% bigMat2,
+          mat_mul_arma(bigMat1, bigMat2))
+
+microbenchmark(
+  bigMat1 %*% bigMat2,
+  mat_mul_arma(bigMat1, bigMat2)
+)
+
+*/
+
+```
+
+And here are the **results** for the `Armadillo` case:
+
+```{r arma-example}
+
+  library(Rcpp)
+  sourceCpp("./mat_mul_arma.cpp")
+  
+```
+
+Here is the second C++ function, **mat_mul_eigen.cpp**:
+
+```
+
+#include <RcppEigen.h>
+
+// [[Rcpp::depends(RcppEigen)]]
+
+// [[Rcpp::export]]
+
+Eigen::MatrixXd  mat_mul_eigen(const Eigen::Map<Eigen::MatrixXd> A,
+		               const Eigen::Map<Eigen::MatrixXd> B) {
+
+  Eigen::MatrixXd C = (A * B);
+
+  return C;
+}
+
+
+/*** R
+
+library(microbenchmark)
+amat <- matrix(as.numeric(1:9),   nrow=3)
+bmat <- matrix(as.numeric(10:18), nrow=3)
+
+mat_mul_eigen(amat, bmat)
+
+amat %*% bmat
+
+microbenchmark(
+  amat %*% bmat,
+  mat_mul_eigen(amat, bmat)
+)
+
+bigMat1 <- matrix(runif(1000000), nrow=1000)
+bigMat2 <- matrix(runif(1000000), nrow=1000)
+
+all.equal(bigMat1 %*% bigMat2,
+          mat_mul_eigen(bigMat1, bigMat2))
+
+microbenchmark(
+    bigMat1 %*% bigMat2,
+    mat_mul_eigen(bigMat1, bigMat2)
+)
+
+*/
+
+```
+
+And here are the **results** for the `Eigen` case:
+
+```{r eigen-example}
+
+  library(Rcpp)
+  sourceCpp("./mat_mul_eigen.cpp")
+  
+```
+
