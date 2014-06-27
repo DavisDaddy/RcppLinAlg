@@ -106,9 +106,9 @@ microbenchmark(
 <pre><code>## 
 ## &gt; library(microbenchmark)
 ## 
-## &gt; amat &lt;- matrix(as.numeric(1:9), nrow = 3)
+## &gt; amat &lt;- matrix(as.numeric(1:9),   nrow=3)
 ## 
-## &gt; bmat &lt;- matrix(as.numeric(10:18), nrow = 3)
+## &gt; bmat &lt;- matrix(as.numeric(10:18), nrow=3)
 ## 
 ## &gt; mat_mul_arma(amat, bmat)
 ##      [,1] [,2] [,3]
@@ -122,26 +122,31 @@ microbenchmark(
 ## [2,]  171  216  261
 ## [3,]  204  258  312
 ## 
-## &gt; microbenchmark(amat %*% bmat, mat_mul_arma(amat, bmat))
+## &gt; microbenchmark(
+## +   amat %*% bmat,
+## +   mat_mul_arma(amat, bmat)
+## + )
 ## Unit: nanoseconds
 ##                      expr  min     lq median   uq   max neval
-##             amat %*% bmat  350  396.5    540  588  6403   100
-##  mat_mul_arma(amat, bmat) 2188 2354.5   2487 2670 16196   100
+##             amat %*% bmat  352  407.5    544  609  4379   100
+##  mat_mul_arma(amat, bmat) 2219 2438.5   2586 2772 13384   100
 ## 
-## &gt; bigMat1 &lt;- matrix(runif(1e+06), nrow = 1000)
+## &gt; bigMat1 &lt;- matrix(runif(1000000), nrow=1000)
 ## 
-## &gt; bigMat2 &lt;- matrix(runif(1e+06), nrow = 1000)
+## &gt; bigMat2 &lt;- matrix(runif(1000000), nrow=1000)
 ## 
-## &gt; all.equal(bigMat1 %*% bigMat2, mat_mul_arma(bigMat1, 
-## +     bigMat2))
+## &gt; all.equal(bigMat1 %*% bigMat2,
+## +           mat_mul_arma(bigMat1, bigMat2))
 ## [1] TRUE
 ## 
-## &gt; microbenchmark(bigMat1 %*% bigMat2, mat_mul_arma(bigMat1, 
-## +     bigMat2))
+## &gt; microbenchmark(
+## +   bigMat1 %*% bigMat2,
+## +   mat_mul_arma(bigMat1, bigMat2)
+## + )
 ## Unit: milliseconds
 ##                            expr   min    lq median    uq   max neval
-##             bigMat1 %*% bigMat2 644.1 649.0  652.3 664.1 870.0   100
-##  mat_mul_arma(bigMat1, bigMat2) 661.7 668.9  671.5 675.4 762.8   100</code></pre>
+##             bigMat1 %*% bigMat2 644.0 665.8  678.8 687.7 712.3   100
+##  mat_mul_arma(bigMat1, bigMat2) 661.8 687.2  698.0 705.0 727.8   100</code></pre>
 <p>Here is the second C++ function, <strong>mat_mul_eigen.cpp</strong>:</p>
 <pre><code>
 #include &lt;RcppEigen.h&gt;
@@ -193,9 +198,9 @@ microbenchmark(
 <pre><code>## 
 ## &gt; library(microbenchmark)
 ## 
-## &gt; amat &lt;- matrix(as.numeric(1:9), nrow = 3)
+## &gt; amat &lt;- matrix(as.numeric(1:9),  nrow=3)
 ## 
-## &gt; bmat &lt;- matrix(as.numeric(10:18), nrow = 3)
+## &gt; bmat &lt;- matrix(as.numeric(10:18), nrow=3)
 ## 
 ## &gt; mat_mul_eigen(amat, bmat)
 ##      [,1] [,2] [,3]
@@ -209,27 +214,31 @@ microbenchmark(
 ## [2,]  171  216  261
 ## [3,]  204  258  312
 ## 
-## &gt; microbenchmark(amat %*% bmat, mat_mul_eigen(amat, 
-## +     bmat))
+## &gt; microbenchmark(
+## +   amat %*% bmat,
+## +   mat_mul_eigen(amat, bmat)
+## + )
 ## Unit: nanoseconds
-##                       expr  min     lq median     uq   max neval
-##              amat %*% bmat  357  441.5  532.5  606.5  3511   100
-##  mat_mul_eigen(amat, bmat) 2303 2693.0 2915.5 3224.5 24043   100
+##                       expr  min     lq median   uq   max neval
+##              amat %*% bmat  368  446.5  569.5  658  3758   100
+##  mat_mul_eigen(amat, bmat) 2373 2890.0 3095.5 3429 45860   100
 ## 
-## &gt; bigMat1 &lt;- matrix(runif(1e+06), nrow = 1000)
+## &gt; bigMat1 &lt;- matrix(runif(1000000), nrow=1000)
 ## 
-## &gt; bigMat2 &lt;- matrix(runif(1e+06), nrow = 1000)
+## &gt; bigMat2 &lt;- matrix(runif(1000000), nrow=1000)
 ## 
-## &gt; all.equal(bigMat1 %*% bigMat2, mat_mul_arma(bigMat1, 
-## +     bigMat2))
+## &gt; all.equal(bigMat1 %*% bigMat2,
+## +           mat_mul_arma(bigMat1, bigMat2))
 ## [1] TRUE
 ## 
-## &gt; microbenchmark(bigMat1 %*% bigMat2, mat_mul_arma(bigMat1, 
-## +     bigMat2))
+## &gt; microbenchmark(
+## +     bigMat1 %*% bigMat2,
+## +     mat_mul_arma(bigMat1, bigMat2)
+## + )
 ## Unit: milliseconds
-##                            expr   min    lq median    uq   max neval
-##             bigMat1 %*% bigMat2 641.8 656.5  663.8 669.8 729.5   100
-##  mat_mul_arma(bigMat1, bigMat2) 646.3 666.2  671.1 678.7 763.9   100</code></pre>
+##                            expr   min    lq median    uq    max neval
+##             bigMat1 %*% bigMat2 644.2 672.6  687.6 705.0  996.4   100
+##  mat_mul_arma(bigMat1, bigMat2) 650.4 682.8  697.4 713.6 1002.9   100</code></pre>
 
 
 </div>
